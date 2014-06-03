@@ -130,7 +130,7 @@ HTMLActuator.prototype.scoreTweetButton = function () {
   tweet.textContent = "Tweet";
 
   var text = "I scored " + this.score + " points at 2048, a game where you " +
-             "join numbers to score high! #2048game #2048ai";
+             "prevent the computer from joining numbers! #2048game #2048ai #8402";
   tweet.setAttribute("data-text", text);
 
   return tweet;
