@@ -82,28 +82,32 @@ GameManager.prototype.move = function(direction) {
   var result = this.grid.move(direction);
   this.score += result.score;
 
-  if (!result.won) {
-    if (result.moved) {
-      // this.grid.computerMove();
-    }
-  } else {
-    this.won = true;
+
+  if (result.won) {
+    this.over = true;
   }
 
   //console.log(this.grid.valueSum());
 
   if (!this.grid.movesAvailable()) {
-    this.over = true; // Game over!
+    this.won = true; // You won!
   }
 
   this.actuate();
 }
 
 GameManager.prototype.addTile = function(data) {
+  this.grid.prepareTiles();
   this.grid.computerMove(data.x, data.y, data.value);
+  var best = this.ai.getBest();
+  if(best) {
+    this.move(best.move);
+  }
+  else {
+    this.won = true;
+  }
   this.actuate();
 }
-
 
 // moves continuously until game is over
 GameManager.prototype.run = function() {

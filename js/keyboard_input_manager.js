@@ -62,11 +62,11 @@ KeyboardInputManager.prototype.listen = function () {
     cell.addEventListener("click", function(e) {
       e.preventDefault();
       self.emit('addTile', {x:x, y:y, value:2});
-    });
+    })
 
     cell.addEventListener("contextmenu", function(e) {
       e.preventDefault();
-      self.emit('addTile', {x:x, y:y, value:4});
+      self.emit('addTile', {x:x, y:y, value:4)});
     });
 
   });
