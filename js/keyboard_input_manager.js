@@ -4,6 +4,8 @@ function KeyboardInputManager() {
   this.listen();
 }
 
+NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
 KeyboardInputManager.prototype.on = function (event, callback) {
   if (!this.events[event]) {
     this.events[event] = [];
@@ -51,6 +53,24 @@ KeyboardInputManager.prototype.listen = function () {
     }
   });
 
+  var cells = document.getElementsByClassName("grid-cell");
+  cells.forEach(function(cell){
+    var id = cell.id; // "grid-cell-x-y"
+    var x = Number(id[10])-1;
+    var y = Number(id[12])-1;
+
+    cell.addEventListener("click", function(e) {
+      e.preventDefault();
+      self.emit('addTile', {x:x, y:y, value:2});
+    });
+
+    cell.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+      self.emit('addTile', {x:x, y:y, value:4});
+    });
+
+  });
+
   var retry = document.getElementsByClassName("retry-button")[0];
   retry.addEventListener("click", this.restart.bind(this));
 
@@ -78,7 +98,7 @@ KeyboardInputManager.prototype.listen = function () {
     drag_block_horizontal: true,
     drag_block_vertical: true
   });
-  
+
   handler.on("swipe", function (event) {
     event.gesture.preventDefault();
     mapped = gestures.indexOf(event.gesture.direction);
