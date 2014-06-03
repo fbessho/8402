@@ -78,8 +78,7 @@ GameManager.prototype.actuate = function () {
 // makes a given move and updates state
 GameManager.prototype.move = function(direction) {
   var result = this.grid.move(direction);
-  this.score += result.score;
-
+  this.score -= result.score;
 
   if (result.won) {
     this.over = true;
@@ -91,7 +90,7 @@ GameManager.prototype.move = function(direction) {
     this.won = true; // You won!
   }
 
-  this.actuate();
+  // this.actuate();
 }
 
 GameManager.prototype.addTile = function(data) {
