@@ -4,6 +4,8 @@ function KeyboardInputManager() {
   this.listen();
 }
 
+NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
 KeyboardInputManager.prototype.on = function (event, callback) {
   if (!this.events[event]) {
     this.events[event] = [];
@@ -23,51 +25,34 @@ KeyboardInputManager.prototype.emit = function (event, data) {
 KeyboardInputManager.prototype.listen = function () {
   var self = this;
 
-  var map = {
-    38: 0, // Up
-    39: 1, // Right
-    40: 2, // Down
-    37: 3, // Left
-    75: 0, // vim keybindings
-    76: 1,
-    74: 2,
-    72: 3
-  };
-
   document.addEventListener("keydown", function (event) {
     var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
                     event.shiftKey;
-    var mapped    = map[event.which];
-
     if (!modifiers) {
-      if (mapped !== undefined) {
-        event.preventDefault();
-        var feedbackContainer  = document.getElementById('feedback-container');
-        feedbackContainer.innerHTML = ' ';
-        self.emit("move", mapped);
-      }
-
       if (event.which === 32) self.restart.bind(self)(event);
     }
   });
 
-  var retry = document.getElementsByClassName("retry-button")[0];
-  retry.addEventListener("click", this.restart.bind(this));
+  var cells = document.getElementsByClassName("grid-cell");
+  cells.forEach(function(cell){
+    var id = cell.id; // "grid-cell-x-y"
+    var x = Number(id[10])-1;
+    var y = Number(id[12])-1;
 
-  var hintButton = document.getElementById('hint-button');
-  hintButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    var feedbackContainer  = document.getElementById('feedback-container');
-    feedbackContainer.innerHTML = '<img src=img/spinner.gif />';
-    self.emit('think');
+    cell.addEventListener("click", function(e) {
+      e.preventDefault();
+      self.emit('addTile', {x:x, y:y, value:2});
+    })
+
+    cell.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+      self.emit('addTile', {x:x, y:y, value:4});
+    });
+
   });
 
-  var runButton = document.getElementById('run-button');
-  runButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    self.emit('run')
-  })
-
+  var retry = document.getElementsByClassName("retry-button")[0];
+  retry.addEventListener("click", this.restart.bind(this));
 
   // Listen to swipe events
   var gestures = [Hammer.DIRECTION_UP, Hammer.DIRECTION_RIGHT,
@@ -78,7 +63,7 @@ KeyboardInputManager.prototype.listen = function () {
     drag_block_horizontal: true,
     drag_block_vertical: true
   });
-  
+
   handler.on("swipe", function (event) {
     event.gesture.preventDefault();
     mapped = gestures.indexOf(event.gesture.direction);
