@@ -29,7 +29,6 @@ HTMLActuator.prototype.actuate = function (grid, metadata) {
 };
 
 HTMLActuator.prototype.restart = function () {
-  if (ga) ga("send", "event", "game", "restart");
   this.clearMessage();
 };
 
